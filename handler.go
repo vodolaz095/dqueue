@@ -78,11 +78,11 @@ func (h *Handler) ExecuteAfter(payload any, after time.Duration) (ok bool) {
 }
 
 // Dump returns copy of contents of the queue in sorted manner, leaving queue intact.
-func (h *Handler) Dump() (ret []*Task) {
+func (h *Handler) Dump() (ret []Task) {
 	h.checkInitialized()
-	ret = make([]*Task, h.data.Len())
+	ret = make([]Task, h.data.Len())
 	for i := range h.data.tasks {
-		ret[i] = h.data.tasks[i]
+		ret[i] = *h.data.tasks[i]
 	}
 	sort.SliceStable(ret, func(i, j int) bool {
 		return ret[i].ExecuteAt.Before(ret[j].ExecuteAt)
