@@ -53,7 +53,7 @@ for j := 0; j < 10; j++ {
                     if err != nil { // aka, requeue message to be delivered in 1 minute
                       handler.ExecuteAfter(something, time.Minute)
                     }
-                } 
+                }
                 break
             case <-ctx.Done():
                 fmt.Printf("Closing worker %v, there are %v tasks in queue\n", workerNumber, handler.Len())
@@ -62,7 +62,7 @@ for j := 0; j < 10; j++ {
                 return
             }
         }
-    }(j)
+    }(j, mainCtx)
 }
 wg.Wait()
 
