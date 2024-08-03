@@ -68,7 +68,7 @@ func TestHandler_Concurrent(t *testing.T) {
 		if task.Payload.(int) != counter {
 			t.Errorf("wrong order %v", task.Payload)
 		}
-		counter += 1
+		counter++
 
 		if task.ExecuteAt.Before(timestamp) {
 			t.Errorf("wrong task order for %s %s",

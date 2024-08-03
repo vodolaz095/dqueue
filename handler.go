@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// Handler is deferred queue handler used to store and retrieve (in time) tasks to be executed
 type Handler struct {
 	mu          sync.Mutex
 	data        *queue
