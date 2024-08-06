@@ -17,21 +17,54 @@ Then, we can consume this tasks by concurrent goroutines and they (tasks) will b
 provided to consumers in proper order, like first task will be `that` to be executed in
 15 seconds from now.
 
+Basic usage
+=====================
 
+Make queue handler:
+```go
+handler := dqueue.New() // import "github.com/vodolaz095/dqueue"
 
-Usage
+// payload can be anything - number, string, buffer, struct...
+something := "task"
+
+// Create tasks to be executed in future
+handler.ExecuteAt(something, time.Now().Add(time.Minute))
+handler.ExecuteAfter(something, time.Minute)
+
+// Extract task ready to be executed
+task, ready := handler.Get()
+if ready { // task is ready
+    fmt.Printf("Task %s is ready to be executed at %s",
+		task.Payload.(string), 
+		task.ExecuteAt.Format(time.Kitchen),
+	)
+} else {
+	fmt.Println("No tasks are ready to be executed")
+}
+// Count tasks left
+tasksInQueue := handler.Len()
+
+// Extract all tasks, so, we can, for example, save all delivery queue  before closing application
+tasks:= handler.Dump()
+
+// Prune queue:
+handler.Prune()
+```
+
+Concurrent consumers example
 ======================
 See full example at [example.go](example%2Fexample.go)
 
-```
+```go
 
 handler := dqueue.New() // import "github.com/vodolaz095/dqueue"
 
 // Publish tasks
+something := "task" // payload can be anything - number, string, buffer, struct...
 handler.ExecuteAt(something, time.Now().Add(time.Minute))
 handler.ExecuteAfter(something, time.Minute)
 
-// make global context to be canceled
+// make global context to be canceled when application is stopping
 wg := sync.WaitGroup{}
 mainCtx, mainCancel := context.WithTimeout(context.Background(), 3*time.Second)
 defer mainCancel()
@@ -66,8 +99,8 @@ for j := 0; j < 10; j++ {
 }
 wg.Wait()
 
-// See tasks left
-tasks, err := handler.Dump()
+// See tasks left, so they can be restored somehow when application is restarted
+tasks := handler.Dump()
 
 
 ```
