@@ -17,6 +17,9 @@ Then, we can consume this tasks by concurrent goroutines and they (tasks) will b
 provided to consumers in proper order, like first task will be `that` to be executed in
 15 seconds from now.
 
+It is worth notice, that any element of queue can be of different type, and typecasting can be slow.
+If you need something less agile and more performant, you can see generic based alternative - https://github.com/vodolaz095/dgqueue
+
 Basic usage
 =====================
 
@@ -101,6 +104,5 @@ wg.Wait()
 
 // See tasks left, so they can be restored somehow when application is restarted
 tasks := handler.Dump()
-
 
 ```
