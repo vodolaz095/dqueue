@@ -23,6 +23,8 @@ func TestQueue_Push(t *testing.T) {
 		Payload:   "Task 3",
 		ExecuteAt: next.Add(-500 * time.Millisecond),
 	})
+	testQueue.Push("something to be ignored")
+	testQueue.Push(12345)
 	if testQueue.tasks[0].Payload.(string) != "Task 1" {
 		t.Error("wrong payload for 1st task")
 	}

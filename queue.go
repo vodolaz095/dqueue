@@ -26,7 +26,10 @@ func (dq *queue) Swap(i, j int) {
 
 // Push is used for implementing heap.Interface.
 func (dq *queue) Push(x any) {
-	item := x.(*Task)
+	item, ok := x.(*Task)
+	if !ok {
+		return
+	}
 	if item.ExecuteAt.Before(time.Now()) {
 		return
 	}
