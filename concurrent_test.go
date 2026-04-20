@@ -25,7 +25,7 @@ func TestHandler_Concurrent(t *testing.T) {
 	tasks := h.Dump()
 	for i := range tasks {
 		t.Logf("Task '%v' to be executed in %s from now.\n",
-			tasks[i].Payload, tasks[i].ExecuteAt.Sub(time.Now()).String(),
+			tasks[i].Payload, time.Until(tasks[i].ExecuteAt).String(),
 		)
 	}
 	// consume with external context
@@ -51,7 +51,6 @@ func TestHandler_Concurrent(t *testing.T) {
 						)
 						ch <- task
 					}
-					break
 				case <-ctx.Done():
 					t.Logf("Closing worker %v, there are %v tasks in queue\n", workerNumber, h.Len())
 					wg.Done()
