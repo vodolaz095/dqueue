@@ -9,7 +9,7 @@ import (
 
 // Handler is deferred queue handler used to store and retrieve (in time) tasks to be executed
 type Handler struct {
-	mu          sync.Mutex
+	mu          *sync.Mutex
 	data        *queue
 	initialized bool
 }
@@ -19,7 +19,7 @@ func New() Handler {
 	data := queue{}
 	data.nextOn = time.Now().Add(maxNextInterval)
 	heap.Init(&data)
-	return Handler{data: &data, initialized: true}
+	return Handler{data: &data, initialized: true, mu: &sync.Mutex{}}
 }
 
 func (h *Handler) checkInitialized() {
