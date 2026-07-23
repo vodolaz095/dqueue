@@ -50,11 +50,11 @@ func (h *Handler) Get() (task Task, ready bool) {
 	if h.data.nextOn.After(time.Now()) {
 		return Task{}, false
 	}
-	item := heap.Pop(h.data).(*Task)
+	item := h.data.tasks[0]
 	if item.ExecuteAt.Before(time.Now()) { // ready
+		heap.Pop(h.data)
 		return *item, true
 	}
-	heap.Push(h.data, item)
 	return Task{}, false
 }
 
