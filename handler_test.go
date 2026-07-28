@@ -1,6 +1,7 @@
 package dqueue
 
 import (
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -247,22 +248,46 @@ func TestHandlerUnInitializedPrune(t *testing.T) {
 }
 
 func BenchmarkHandlerGetEmpty(b *testing.B) {
-	// Create a new handler
 	h := New()
-
-	// Reset the timer to exclude setup time
 	b.ResetTimer()
-
-	// Report memory allocations
 	b.ReportAllocs()
-
-	// Run the benchmark
 	for b.Loop() {
-		// Call Get() on empty queue
 		task, ready := h.Get()
-		// Use the result to prevent compiler optimization
 		if ready && task.ExecuteAt.IsZero() {
 			b.Fatal("unexpected task")
+		}
+	}
+}
+
+func BenchmarkHandlerGetNotReady(b *testing.B) {
+	h := New()
+	h.ExecuteAfter("1", time.Hour)
+	b.ResetTimer()
+	b.ReportAllocs()
+	for b.Loop() {
+		task, ready := h.Get()
+		if ready && task.ExecuteAt.IsZero() {
+			b.Fatal("unexpected task")
+		}
+	}
+}
+
+func BenchmarkHandlerGetReadySingleTasks(b *testing.B) {
+	h := New()
+	h.ExecuteAfter("1", time.Millisecond)
+	b.ResetTimer()
+	b.ReportAllocs()
+	var counter int32
+	for b.Loop() {
+		task, ready := h.Get()
+		if ready {
+			val := atomic.AddInt32(&counter, 1)
+			if val != 1 {
+				b.Fatal("unexpected counter value")
+			}
+			if task.Payload != "1" {
+				b.Fatal("unexpected payload")
+			}
 		}
 	}
 }
