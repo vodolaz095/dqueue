@@ -25,6 +25,9 @@ jobs:
     - name: run unit test
       run: go test -v --cover ./...
 
+    - name: run benchmark
+      run: make benchmark
+
     - name: run example
       run: go run example/example.go
 
