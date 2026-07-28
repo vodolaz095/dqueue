@@ -19,3 +19,6 @@ test:
 
 cover:
 	go test -v --cover ./...
+
+bench:
+	go test -bench=. -benchmem

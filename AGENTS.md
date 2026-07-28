@@ -30,6 +30,9 @@ make lint
 
 # Run race detector on example
 make race
+
+# Run benchmarks with memory allocation reporting
+make bench
 ```
 
 ## Code Organization
